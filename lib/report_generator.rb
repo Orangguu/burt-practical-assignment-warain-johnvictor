@@ -52,9 +52,9 @@ module ReportGenerator
       {
         "shop_name" => rows.first["shop_name"],
         "shop_city" => rows.first["shop_city"],
-        "total_units_sold" => rows.sum { |row| row["units_sold"].to_i },
-        "total_revenue" => rows.sum { |row| row["revenue"].to_f },
-        "total_transactions" => rows.sum { |row| row["transactions"].to_i }
+        "total_units_sold" => sum_or_nil(rows, "units_sold"),
+        "total_revenue" => sum_or_nil(rows, "revenue"),
+        "total_transactions" => sum_or_nil(rows, "transactions")
       }
     end
   end
@@ -68,6 +68,13 @@ module ReportGenerator
     end
   end
 
+  # If all entries are nil, return nil
+  def self.sum_or_nil(rows, field)
+    values = rows.filter_map { |row| row[field] }
+    values.empty? ? nil : values.sum
+  end
+
   private_class_method :build_store_lookup
+  private_class_method :sum_or_nil
 
 end
