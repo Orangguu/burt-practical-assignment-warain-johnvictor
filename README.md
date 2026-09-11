@@ -20,19 +20,19 @@ tests/report_writer_test.rb - Tests the expected behavior of writing the generat
 
 ## Setup
 
-This project uses Ruby 3.4.0 and Bundler. The .ruby-version file indicates the Ruby version, and the Gemfile defines the test dependency.
+This project uses Ruby 3.4 and Bundler. The .ruby-version file indicates the Ruby version, and the Gemfile defines the test dependency.
 
-Install Ruby 3.4.0, then run:
+Install Ruby 3.4, then run:
 
 ```bash
 gem install bundler
 bundle install
 ```
 
-# Run the program:
+# Run the program
 bundle exec ruby main.rb
 
-# Run tests individually:
+# Run tests individually
 bundle exec ruby tests/data_cleaner_test.rb
 bundle exec ruby tests/report_generator_test.rb
 bundle exec ruby tests/report_writer_test.rb

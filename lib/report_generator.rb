@@ -43,12 +43,12 @@ module ReportGenerator
     end
   end
 
-  def self.generate_store_summary(detail_rows)
+  def self.generate_store_summary(detail_rows, stores = nil)
     groups = detail_rows.group_by do |row|
       row["shop_id"]
     end
 
-    groups.map do |_shop_id, rows|
+    summaries = groups.map do |_shop_id, rows|
       {
         "shop_name" => rows.first["shop_name"],
         "shop_city" => rows.first["shop_city"],
@@ -57,6 +57,23 @@ module ReportGenerator
         "total_transactions" => sum_or_nil(rows, "transactions")
       }
     end
+
+    return summaries unless stores
+
+    registered_summaries = stores.filter_map do |store|
+      shop_id = DataCleaner.parse_string(store["shop_id"])
+      next if groups.key?(shop_id)
+
+      {
+        "shop_name" => DataCleaner.parse_string(store["name"]),
+        "shop_city" => DataCleaner.parse_string(store["city"]),
+        "total_units_sold" => 0,
+        "total_revenue" => 0,
+        "total_transactions" => 0
+      }
+    end
+
+    summaries + registered_summaries
   end
 
   def self.build_store_lookup(stores)
@@ -68,10 +85,12 @@ module ReportGenerator
     end
   end
 
-  # If all entries are nil, return nil
+  # If any entries are nil, return nil
   def self.sum_or_nil(rows, field)
-    values = rows.filter_map { |row| row[field] }
-    values.empty? ? nil : values.sum
+    values = rows.map { |row| row[field] }
+    return nil if values.any?(&:nil?)
+
+    values.sum
   end
 
   private_class_method :build_store_lookup

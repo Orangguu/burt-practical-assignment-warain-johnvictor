@@ -12,7 +12,7 @@ stores = DataLoader.load_json(File.join(data_dir, "stores.json"))
 transactions = DataLoader.load_json(File.join(data_dir, "transactions.json"))
 
 detail_rows = ReportGenerator.generate_detail(transactions, stores)
-summary_rows = ReportGenerator.generate_store_summary(detail_rows)
+summary_rows = ReportGenerator.generate_store_summary(detail_rows, stores)
 
 FileUtils.mkdir_p(output_dir)
 ReportWriter.write_transaction(

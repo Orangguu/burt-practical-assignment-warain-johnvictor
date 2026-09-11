@@ -103,6 +103,21 @@ class ReportGeneratorTest < Minitest::Test
     assert_nil summary["total_transactions"]
   end
 
+  def test_generate_store_summary_includes_registered_shops_without_transactions
+    stores = [
+      { "shop_id" => "S900", "name" => "UPTC", "city" => "Manila" },
+      { "shop_id" => "S901", "name" => "Quiet Shop", "city" => "Cebu" }
+    ]
+
+    summaries = ReportGenerator.generate_store_summary([], stores)
+    summary = summaries.find { |row| row["shop_name"] == "Quiet Shop" }
+
+    assert_equal "Cebu", summary["shop_city"]
+    assert_equal 0, summary["total_units_sold"]
+    assert_equal 0, summary["total_revenue"]
+    assert_equal 0, summary["total_transactions"]
+  end
+
   def test_generate_detail_returns_nil_for_missing_values
     transactions = [
       {
